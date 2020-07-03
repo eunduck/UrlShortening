@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style type="text/css">
+        .layer {
+            position: absolute;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            font-size: 15px;
+        }
+        .layer .content {
+            display: inline-block;
+            vertical-align: middle
+        }
+        .layer .blank {
+            display: inline-block;
+            width: 0;
+            height: 100%;
+            vertical-align: middle
+        }
+    </style>
+</head>
+<body>
+    <div class="layer">
+        <div class="content">
+			<input type="text" value="" id="originInput"/>
+			<button type="button" onclick="originSend()">SEND</button><br/>
+			result: <span id="result"></span>
+			<br/>
+			<button type="button" onclick="allRequest()">ALL REQUEST</button>
+			<table>
+				<thead>
+					<tr><th>Origin</th><th>Short</th><th>Count</th></tr>
+				</thead>
+				<tbody id="allResult">
+				</tbody>
+			</table>
+		</div>
+        <div class="blank">
+        </div>
+    </div>
+<br/>
+<script>   
+function originSend() {
+	$.post("/url", { url: $("#originInput").val() }, $.sendResult);
+}
+
+$.sendResult = function (data) {
+	if(data.status == 200) {
+		$("#result").text(data.result);
+	} else {
+		$("#result").text(data.message);
+	}
+}
+
+function allRequest() {
+	$("#allResult").html("");
+	$.get("/all", $.allData);
+}
+
+$.allData = function (data) {
+	if(data.status == 200) {
+		$.each(data.result, function(key, value) {
+			$("#allResult").append('<tr><td>'+key+'</td><td>'+value.shortenUrl+'</td><td>'+value.count+'</td></tr>');
+		});
+	}
+}
+    
+</script>  
+
+</body>
+</html>
